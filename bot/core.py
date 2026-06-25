@@ -1,6 +1,8 @@
 from time import time
 import sys
 from javascript import require, On, Once
+from actions import walk_to
+
 
 mineflayer = require('mineflayer')
 pathfinder = require('mineflayer-pathfinder')
@@ -20,6 +22,7 @@ options = {
 }
 
 bot = mineflayer.createBot(options)
+bot.loadPlugin(pathfinder.pathfinder)
 
 @Once(bot, 'spawn')
 def on_spawn(this, *args):
@@ -30,6 +33,9 @@ def on_chat(this, username, message, *rest):
     if username == bot.username:
         return #ignore self
     print(f"{username}: {message}")
+    if message == 'come':
+        pos = bot.players[username].entity.position
+        walk_to(bot, pos.x, pos.y, pos.z)
     
 @On(bot, 'death')
 def on_death(*args):
@@ -55,3 +61,6 @@ def on_block_mine(this, *args):
     global block_mine_counter
     block_mine_counter += 1
     print(f"Block mine count: {block_mine_counter}")
+
+
+#walk_to(bot, 44, 72, 39)
